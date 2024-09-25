@@ -28,6 +28,7 @@ const AnimeDetail = () => {
                         <li> <span>Status:</span> {animeContext.status}</li>
                         <li> <span>Episodios:</span> {animeContext.episodes}</li>
                         <li> <span>Score:</span> {animeContext.score}</li>
+                        <li> <span>Estreno:</span> {animeContext.aired.string}</li>
                     </ul>
                     <div className='flex gap-3'>
                         <button className="rounded-full bg-slate-900 p-2 text-white hover:bg-slate-500">  Añadir a favoritos </button>

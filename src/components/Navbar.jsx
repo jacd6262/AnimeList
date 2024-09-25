@@ -7,7 +7,8 @@ const Navbar = () => {
         <nav className="text-white">
         <ul className="flex justify-center items-center gap-6 pr-24 ">
             <li className="hover:text-indigo-300 hover:underline underline-offset-4" ><NavLink to="/">Home</NavLink></li>
-            <li className="hover:text-indigo-300 hover:underline underline-offset-4"><NavLink to="/">Minasuki</NavLink></li>
+            <li className="hover:text-indigo-300 hover:underline underline-offset-4"><NavLink to="/seasons">Temporadas</NavLink></li>
+            <li className="hover:text-indigo-300 hover:underline underline-offset-4"><NavLink to="/favorites">Favoritos</NavLink></li>
         </ul>
     </nav>
     </header>

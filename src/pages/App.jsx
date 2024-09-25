@@ -3,6 +3,8 @@ import Home from "./Home";
 import Navbar from "../components/Navbar";
 import Contexto1 from "../context/Contexto1";
 import AnimeDetail from "../components/AnimeDetail";
+import Season from "./Season";
+import Favoritos from "./Favoritos";
 const App = () => {
 
 
@@ -10,6 +12,8 @@ const App = () => {
     const AppRoutes = () => {
         let rutes = useRoutes([
             { path: '/*', element: <Home /> },
+            { path: '/seasons', element: <Season/> },
+            { path: '/favorites', element: <Favoritos/> },
         ]);
         return rutes;
     }
