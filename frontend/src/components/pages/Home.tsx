@@ -23,7 +23,7 @@ const Home = () => {
   if (paginationLoading)
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-500"></div>
       </div>
     );
 
@@ -38,7 +38,7 @@ const Home = () => {
         ) : (
           <div className="w-[80%] flex justify-center mt-8 px-2 lg:px-4">
             {/* Grid ajustado tipo Netflix: Mucho más pegado horizontalmente, 5-6 elementos */}
-            <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-x-3 gap-y-12 w-full justify-items-center">
+            <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-x-3 gap-y-14 w-full justify-items-center">
               {paginatedData.map((anime) => (
                 <MiCard
                   key={anime.mal_id}
@@ -46,6 +46,8 @@ const Home = () => {
                   synopsis={anime.synopsis}
                   episodes={anime.episodes}
                   image={anime.images.jpg.image_url}
+                  score={anime.score}
+                  genres={anime.genres}
                 />
               ))}
             </div>
@@ -53,7 +55,7 @@ const Home = () => {
         )}
 
         {/* Paginación */}
-        <div className="py-1">
+        <div className="py-14 px-2 lg:px-4 flex justify-center">
           <AnimePagination
             pagination={pagination}
             page={page}

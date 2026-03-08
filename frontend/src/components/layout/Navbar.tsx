@@ -10,7 +10,7 @@ const Navbar = () => {
     <div className="fixed top-0 left-0 w-full bg-[#141414] text-gray-200 z-50 border-b border-white/5 shadow-md">
       <div className="flex w-full items-center justify-between px-8 py-4">
         {/* Brand / Logo placeholder */}
-        <div className="text-2xl font-black text-orange-500 tracking-wider">
+        <div className="text-2xl font-black text-cyan-500 tracking-wider">
           ANIMELIST
         </div>
         
@@ -20,7 +20,7 @@ const Navbar = () => {
             <NavigationMenuItem>
               <NavigationMenuLink
                 href="/"
-                className="font-medium text-sm transition-colors hover:text-orange-500 bg-transparent hover:bg-transparent focus:bg-transparent"
+                className="font-medium text-sm transition-colors hover:text-cyan-500 bg-transparent hover:bg-transparent focus:bg-transparent"
               >
                 Home
               </NavigationMenuLink>
@@ -30,7 +30,7 @@ const Navbar = () => {
             <NavigationMenuItem>
               <NavigationMenuLink
                 href="/popular"
-                className="font-medium text-sm transition-colors hover:text-orange-500 bg-transparent hover:bg-transparent focus:bg-transparent"
+                className="font-medium text-sm transition-colors hover:text-cyan-500 bg-transparent hover:bg-transparent focus:bg-transparent"
               >
                 Animes Populares
               </NavigationMenuLink>
@@ -40,7 +40,7 @@ const Navbar = () => {
             <NavigationMenuItem>
               <NavigationMenuLink
                 href="/seasonal"
-                className="font-medium text-sm transition-colors hover:text-orange-500 bg-transparent hover:bg-transparent focus:bg-transparent"
+                className="font-medium text-sm transition-colors hover:text-cyan-500 bg-transparent hover:bg-transparent focus:bg-transparent"
               >
                 Animes de Temporada
               </NavigationMenuLink>
@@ -50,7 +50,7 @@ const Navbar = () => {
             <NavigationMenuItem>
               <NavigationMenuLink
                 href="/favorites"
-                className="font-medium text-sm transition-colors hover:text-orange-500 bg-transparent hover:bg-transparent focus:bg-transparent"
+                className="font-medium text-sm transition-colors hover:text-cyan-500 bg-transparent hover:bg-transparent focus:bg-transparent"
               >
                 Mis Favoritos
               </NavigationMenuLink>
@@ -60,7 +60,7 @@ const Navbar = () => {
             <NavigationMenuItem>
               <NavigationMenuLink
                 href="/watchlist"
-                className="font-medium text-sm transition-colors hover:text-orange-500 bg-transparent hover:bg-transparent focus:bg-transparent"
+                className="font-medium text-sm transition-colors hover:text-cyan-500 bg-transparent hover:bg-transparent focus:bg-transparent"
               >
                 Lista de Seguimiento
               </NavigationMenuLink>
@@ -70,7 +70,7 @@ const Navbar = () => {
             <NavigationMenuItem>
               <NavigationMenuLink
                 href="/upcoming"
-                className="font-medium text-sm transition-colors hover:text-orange-500 bg-transparent hover:bg-transparent focus:bg-transparent"
+                className="font-medium text-sm transition-colors hover:text-cyan-500 bg-transparent hover:bg-transparent focus:bg-transparent"
               >
                 Próximos Estrenos
               </NavigationMenuLink>

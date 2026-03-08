@@ -46,8 +46,8 @@ const AnimePagination = ({ pagination, page, setPage }: Props) => {
                 isActive={page === pageNumber}
                 className={`px-3 py-2 rounded-md border border-white/10 transition-colors duration-300 ${
                   page === pageNumber
-                    ? "bg-orange-600 text-white font-bold border-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.5)]"
-                    : "bg-zinc-900 text-gray-300 hover:text-white hover:bg-orange-600/80 hover:border-orange-500/80"
+                    ? "bg-cyan-600 text-white font-bold border-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+                    : "bg-zinc-900 text-gray-300 hover:text-white hover:bg-cyan-600/80 hover:border-cyan-500/80"
                 }`}
               >
                 {pageNumber}
@@ -64,7 +64,7 @@ const AnimePagination = ({ pagination, page, setPage }: Props) => {
               e.preventDefault();
               if (pagination.has_next_page) setPage(page + 1);
             }}
-             className="px-3 py-2 rounded-md bg-zinc-900 border border-white/10 text-gray-300 hover:text-white hover:bg-orange-600 hover:border-orange-500 transition-colors duration-300"
+            className="px-3 py-2 rounded-md bg-zinc-900 border border-white/10 text-gray-300 hover:text-white hover:bg-cyan-600 hover:border-cyan-500 transition-colors duration-300"
           />
         </PaginationItem>
       </PaginationContent>
