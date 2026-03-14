@@ -1,73 +1,60 @@
-# 📺 Gestión de Animes por Temporada
-
-Este proyecto es una **web para gestionar los animes** que veré cada temporada. Incluye un **frontend con TailwindCSS y Heroicons**, y un **backend con Node.js y MongoDB**.
-
----
-
-## 🚀 Configuración del Proyecto
-
-### 🛠️ **1. Inicializar Git y subir a GitHub**
-Ejecuta los siguientes comandos para conectar el proyecto con GitHub:
-
-```sh
-git remote add origin git@github.com:jacd6262/02-AnimeList.git
-git push -u origin main
-```
-
-🎨 Frontend
-El frontend utiliza TailwindCSS y Heroicons.
-
-📦 Instalar dependencias
-```sh
-    npm i -D @tailwindcss/vite
-    npm install @heroicons/react
-```
-
-📌 Importar Heroicons
-Puedes importar los iconos en tu componente de React así:
-```sh
-    import { BeakerIcon } from '@heroicons/react/24/solid'
-```
-
-🖥 Backend
-El backend usa Node.js, Express y MongoDB.
-
-📦 Instalar dependencias
-```sh
-    npm i express mongoose cors dotenv
-    npm i -D nodemon
-```
-
-📌 Explicación de cada paquete:
-
-- **express** → Framework para manejar rutas y solicitudes HTTP.
-- **mongoose** → ODM para manejar bases de datos MongoDB.
-- **cors** → Permite que el backend acepte peticiones desde otros dominios.
-- **dotenv** → Para manejar variables de entorno (.env).
-- **nodemon** → Para reiniciar automáticamente el servidor en cada cambio.
+<div align="center">
+  <img src="https://img.icons8.com/color/96/000000/anime.png" alt="AnimeList Logo" />
+  <h1>📺 AnimeList - Gestión de Animes</h1>
+  <p><em>Organiza, descubre y lleva el control de todos los animes que ves en cada temporada con un diseño moderno.</em></p>
+</div>
 
 ---
 
-## 🏗 Estructura del Proyecto
+## 📖 Sobre el Proyecto
 
-```
-📂 02-AnimeList 
-│── 📂 frontend/ # Interfaz de usuario (React + Tailwind) 
-│── 📂 backend/ # Servidor (Node.js + Express + MongoDB) 
-│── 📄 README.md # Documentación del proyecto 
-│── 📄 .gitignore # Archivos a ignorar en Git 
-│── 📄 package.json # Dependencias y scripts
-```
+**AnimeList** es una aplicación web full-stack diseñada para los verdaderos fanáticos del anime. Te permite explorar nuevas temporadas, buscar series específicas, gestionar tus favoritos y mantener un registro de tus estados (Viendo, Completado, Pendiente, etc.). 
 
-📌 Desarrollado por: Tengen
+Todo esto envuelto en una interfaz de usuario premium, construida para ser rápida, fluida y con una temática oscura acentuada con colores vibrantes.
 
-Rutas api:
-temporada: https://api.jikan.moe/v4/seasons/2012/spring?sfw
-Se viene: https://api.jikan.moe/v4/seasons/upcoming
-ova: https://api.jikan.moe/v4/top/anime?type=ova
-stemporada actual: https://api.jikan.moe/v4/seasons/now?sfw
-Animes general: https://api.jikan.moe/v4/top/anime?sfw
-Anime especifico por nombre: https://api.jikan.moe/v4/anime?q=one-piece&sfw
+### ✨ Características Principales
+- 🔍 **Búsqueda Avanzada:** Encuentra cualquier anime en segundos con actualizaciones en tiempo real.
+- 📅 **Por Temporada:** Descubre los estrenos de la temporada actual o los animes que están por venir.
+- 🔐 **Autenticación Segura:** Sistema de usuarios protegido con JWT para guardar tus listas de manera privada.
+- 💅 **Diseño Moderno:** UI completamente responsiva e interactiva basada en componentes de alta calidad.
 
+---
 
-Añadir: <a target="_blank" href="https://icons8.com/icon/dpUQB4dX6yQC/anime">Anime</a> icono de <a target="_blank" href="https://icons8.com">Icons8</a>
+## 🛠️ Tecnologías Usadas
+
+El proyecto está dividido en dos partes y construido con las mejores herramientas del ecosistema JavaScript/TypeScript:
+
+### 🎨 Frontend
+- ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) **React.js** (empaquetado con Vite para máxima velocidad)
+- ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) **TypeScript** 
+- ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) **Tailwind CSS** (estilizado utilidad-primero)
+- 🧩 **Shadcn UI & Heroicons** (componentes accesibles y biblioteca de iconos)
+- 🔄 **Framer Motion** (para animaciones fluidas)
+
+### ⚙️ Backend
+- ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) **Node.js** & Express (API REST)
+- ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) **MongoDB & Mongoose** (Base de datos NoSQL flexible)
+- 🔐 **JWT (JSON Web Tokens)** (Manejo de sesiones y autenticación stateless)
+
+---
+
+## 🔌 Rutas Jikan API utilizadas
+
+Para obtener la información actualizada de los animes, consumimos la **[Jikan API](https://jikan.moe/)** (API no oficial de MyAnimeList).
+
+| Consulta | Endpoint (URL) |
+|----------|---------------|
+| **Temporada específica** | `https://api.jikan.moe/v4/seasons/2012/spring?sfw` |
+| **Próximos estrenos**    | `https://api.jikan.moe/v4/seasons/upcoming` |
+| **Mejores OVAs**         | `https://api.jikan.moe/v4/top/anime?type=ova` |
+| **Temporada Actual**     | `https://api.jikan.moe/v4/seasons/now?sfw` |
+| **Animes General (Top)** | `https://api.jikan.moe/v4/top/anime?sfw` |
+| **Búsqueda por nombre**  | `https://api.jikan.moe/v4/anime?q=one-piece&sfw` |
+
+---
+
+## 📜 Créditos y Atribuciones
+
+Desarrollado con pasión por **Tengen**.
+
+*Añadir: <a target="_blank" href="https://icons8.com/icon/dpUQB4dX6yQC/anime">Anime</a> icono de <a target="_blank" href="https://icons8.com">Icons8</a>*
