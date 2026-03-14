@@ -23,7 +23,7 @@ const Home = () => {
   if (paginationLoading)
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-purple-500"></div>
       </div>
     );
 

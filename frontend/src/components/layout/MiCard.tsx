@@ -77,10 +77,10 @@ const MiCard = ({ title, episodes, image, score, genres }: AnimeCardProps) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {/* Heart / Favorites Button */}
-                  <button className="border-2 border-gray-500 text-white p-1.5 rounded-full hover:border-cyan-500 hover:text-cyan-500 transition-colors duration-200 cursor-pointer">
+                  <button className="border-2 border-gray-500 text-white p-1.5 rounded-full hover:border-purple-500 hover:text-purple-500 transition-colors duration-200 cursor-pointer">
                     <Heart className="w-5 h-5" />
                   </button>
-                  <button className="border-2 border-gray-500 text-white p-1.5 rounded-full hover:border-cyan-500 hover:text-cyan-500 transition-colors duration-200 cursor-pointer">
+                  <button className="border-2 border-gray-500 text-white p-1.5 rounded-full hover:border-purple-500 hover:text-purple-500 transition-colors duration-200 cursor-pointer">
                     <Plus className="w-5 h-5" />
                   </button>
                 </div>
@@ -123,7 +123,7 @@ const MiCard = ({ title, episodes, image, score, genres }: AnimeCardProps) => {
                 {genres.slice(0, 3).map((genre, index) => (
                   <span
                     key={genre.mal_id}
-                    className="hover:text-cyan-500 transition-colors"
+                    className="hover:text-purple-400 transition-colors"
                   >
                     {genre.name}
                     {genres.length > 1 &&
