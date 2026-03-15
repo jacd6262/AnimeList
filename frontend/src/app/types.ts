@@ -8,9 +8,11 @@ export interface User {
 }
 
 export interface Anime {
-    id_anime?: number;
-    id_anime_genre: number;
-    id_season: number;
+    id_user: number;
+    favorite: boolean;
+    added_to_list: boolean;
+    genres: string[];
+    season: string;
     name: string;
     score?: number;
     episodes?: number;

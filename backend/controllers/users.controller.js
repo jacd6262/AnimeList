@@ -80,3 +80,99 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ error: "Error al iniciar sesión" });
   }
 };
+
+//Agregar anime a lista de seguimiento del usuario
+export const addAnimeToFollowUp = async (req, res) => {
+  const { id_user, mal_id, favorite, added_to_list, season, name, genres, score, episodes, synopsis } = req.body;
+  let id_anime;
+  console.log(req.body, "pruebaaa");
+
+  try {
+    // 1. Buscar anime por mal_id
+    let [rows] = await pool.query("SELECT * FROM animes WHERE mal_id = ?", [mal_id]);
+    if (rows.length > 0) {
+      id_anime = rows[0].id_anime;
+    } else {
+
+      // 2. Resolver season
+      let id_season;
+      const [SeasonRows] = await pool.query("SELECT id_season FROM seasons WHERE name = ?", [season]);
+      if (!season) {
+        // usar el id de la season "unknown"
+        const [seasonRow] = await pool.query("SELECT id_season FROM seasons WHERE name = 'unknown'");
+        id_season = seasonRow[0].id_season;
+      } else {
+        const [seasonRow] = await pool.query("SELECT id_season FROM seasons WHERE name = ?", [season]);
+        if (seasonRow.length === 0) {
+          return res.status(400).json({ message: "Season inválida" });
+        }
+        id_season = seasonRow[0].id_season;
+      }
+
+
+      // 3. Insertar anime
+      const [InserAnime] = await pool.query(
+        "INSERT INTO animes (id_season, name, score, episodes, synopsis, mal_id) VALUES (?, ?, ?, ?, ?, ?)",
+        [id_season, name, score || null, episodes || null, synopsis || null, mal_id] // ✅ usa mal_id del body
+      );
+      id_anime = InserAnime.insertId; // ahora sí obtienes el id interno
+
+      // 4. Manejar géneros
+      for (const genreName of genres) {
+        let [genRows] = await pool.query("SELECT id_anime_genre FROM animes_genres WHERE name = ?", [genreName]);
+        let id_anime_genre;
+        if (genRows.length > 0) {
+          id_anime_genre = genRows[0].id_anime_genre;
+        } else {
+          const [insertGenre] = await pool.query("INSERT INTO animes_genres (name) VALUES (?)", [genreName]);
+          id_anime_genre = insertGenre.insertId;
+        }
+        // log después de tener todos los valores
+        console.log("Insertando género:", { id_anime, id_anime_genre, mal_id, genreName });
+        const [exists] = await pool.query(
+          "SELECT * FROM anime_genres_map WHERE id_anime = ? AND id_anime_genre = ?",
+          [id_anime, id_anime_genre]
+        );
+
+        if (exists.length === 0) {
+          await pool.query(
+            "INSERT INTO anime_genres_map (id_anime, id_anime_genre, mal_id) VALUES (?, ?, ?)",
+            [id_anime, id_anime_genre, mal_id]
+          );
+          console.log("Insertado género:", { id_anime, id_anime_genre, mal_id, genreName });
+        } else {
+          console.log("Ya existía género:", { id_anime, id_anime_genre, genreName });
+        }
+      }
+    }
+
+    // 5. Insertar en user_anime_list
+    if (!id_user || !mal_id) {
+      console.log("Error: faltan id_user o mal_id", { id_user, mal_id });
+      return res.status(400).json({ message: "Faltan id_user o mal_id" });
+    }
+
+    //valores por defecto y agregar preferencias
+    const status = "on_hold";
+    const [result] = await pool.query(
+      `INSERT INTO user_anime_list 
+       (id_user, id_anime, mal_id, status, favorite, added_to_list) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [id_user, id_anime, mal_id, status, favorite ?? false, added_to_list ?? true]
+    );
+
+    res.json({
+      message: "Anime añadido a la lista",
+      id_user_anime: result.insertId,
+      data: { id_user, id_anime, status, favorite, added_to_list }
+    });
+  } catch (error) {
+    console.error("Error en addAnimeToFollowUp:", error.sqlMessage || error.message);
+    res.status(500).json({
+      message: "Error al añadir anime a la lista",
+      error: error.sqlMessage || error.message,
+      stack: error.stack
+    });
+  }
+};
+

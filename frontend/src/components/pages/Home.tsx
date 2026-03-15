@@ -42,12 +42,14 @@ const Home = () => {
               {paginatedData.map((anime) => (
                 <MiCard
                   key={anime.mal_id}
+                  mal_id={anime.mal_id}
                   title={anime.title}
                   synopsis={anime.synopsis}
                   episodes={anime.episodes}
                   image={anime.images.jpg.image_url}
                   score={anime.score}
                   genres={anime.genres}
+                  season={anime.season}
                 />
               ))}
             </div>

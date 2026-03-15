@@ -2,6 +2,9 @@ import { useState, useRef } from "react";
 import { ChevronDown, Heart, Plus, StarIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
+import { addAnimeToList } from "@/app/registerUser";
+import { useAuth } from "../hooks/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type Genre = {
   mal_id: number;
@@ -11,23 +14,44 @@ type Genre = {
 };
 
 type AnimeCardProps = {
+  mal_id: number;
   title: string;
   synopsis: string;
   episodes: number;
   image: string;
   score: number;
   genres: Genre[];
+  season: string;
 };
 
-const MiCard = ({ title, episodes, image, score, genres }: AnimeCardProps) => {
+const MiCard = ({ mal_id, title, episodes, image, score, genres, season }: AnimeCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const hoverTimeoutRef = useRef<number | null>(null);
+
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleMouseEnter = () => {
     // Add a slight delay so it doesn't pop up instantly while scrolling across many
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovered(true);
     }, 400); // 400ms delay mimics netflix feel
+  };
+
+  const handleAddToList = async () => {
+    if (!user) {
+      alert("Debes iniciar sesión para añadir a tu lista");
+      return;
+    }
+    await addAnimeToList({
+      id_user: user.id,
+      mal_id: mal_id,
+      favorite: false,
+      added_to_list: true,
+      season: season,
+      name: title,
+      genres: genres.map((genre) => genre.name),
+    })
   };
 
   const handleMouseLeave = () => {
@@ -63,7 +87,7 @@ const MiCard = ({ title, episodes, image, score, genres }: AnimeCardProps) => {
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-               w-[140%] min-w-[220px] h-[400px] bg-[#141414] border border-zinc-800
+               w-[130%] min-w-[220px] h-[400px] bg-[#141414] border border-zinc-800
                rounded-md overflow-hidden shadow-2xl shadow-black/80 cursor-pointer"
           >
             {/* Top Half: Image */}
@@ -81,7 +105,9 @@ const MiCard = ({ title, episodes, image, score, genres }: AnimeCardProps) => {
                     <Heart className="w-5 h-5" />
                   </button>
                   <button className="border-2 border-gray-500 text-white p-1.5 rounded-full hover:border-purple-500 hover:text-purple-500 transition-colors duration-200 cursor-pointer">
-                    <Plus className="w-5 h-5" />
+                    <Plus
+                      onClick={handleAddToList}
+                      className="w-5 h-5" />
                   </button>
                 </div>
 
@@ -114,11 +140,10 @@ const MiCard = ({ title, episodes, image, score, genres }: AnimeCardProps) => {
 
               {/* Genres */}
               <div
-                className={`flex text-xs font-medium ${
-                  genres.length === 1
-                    ? "justify-center text-gray-400"
-                    : "gap-2 text-gray-400"
-                }`}
+                className={`flex text-xs font-medium ${genres.length === 1
+                  ? "justify-center text-gray-400"
+                  : "gap-2 text-gray-400"
+                  }`}
               >
                 {genres.slice(0, 3).map((genre, index) => (
                   <span
