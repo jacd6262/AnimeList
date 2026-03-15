@@ -83,9 +83,8 @@ export const loginUser = async (req, res) => {
 
 //Agregar anime a lista de seguimiento del usuario
 export const addAnimeToFollowUp = async (req, res) => {
-  const { id_user, mal_id, favorite, added_to_list, season, name, genres, score, episodes, synopsis } = req.body;
+  const { id_user, mal_id, favorite, added_to_list, season, name, genres, score, episodes, synopsis, image } = req.body;
   let id_anime;
-  console.log(req.body, "pruebaaa");
 
   try {
     // 1. Buscar anime por mal_id
@@ -93,12 +92,9 @@ export const addAnimeToFollowUp = async (req, res) => {
     if (rows.length > 0) {
       id_anime = rows[0].id_anime;
     } else {
-
       // 2. Resolver season
       let id_season;
-      const [SeasonRows] = await pool.query("SELECT id_season FROM seasons WHERE name = ?", [season]);
       if (!season) {
-        // usar el id de la season "unknown"
         const [seasonRow] = await pool.query("SELECT id_season FROM seasons WHERE name = 'unknown'");
         id_season = seasonRow[0].id_season;
       } else {
@@ -109,13 +105,12 @@ export const addAnimeToFollowUp = async (req, res) => {
         id_season = seasonRow[0].id_season;
       }
 
-
       // 3. Insertar anime
       const [InserAnime] = await pool.query(
-        "INSERT INTO animes (id_season, name, score, episodes, synopsis, mal_id) VALUES (?, ?, ?, ?, ?, ?)",
-        [id_season, name, score || null, episodes || null, synopsis || null, mal_id] // ✅ usa mal_id del body
+        "INSERT INTO animes (id_season, name, score, episodes, synopsis,image, mal_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [id_season, name, score || null, episodes || null, synopsis || null, image || null, mal_id]
       );
-      id_anime = InserAnime.insertId; // ahora sí obtienes el id interno
+      id_anime = InserAnime.insertId;
 
       // 4. Manejar géneros
       for (const genreName of genres) {
@@ -127,8 +122,7 @@ export const addAnimeToFollowUp = async (req, res) => {
           const [insertGenre] = await pool.query("INSERT INTO animes_genres (name) VALUES (?)", [genreName]);
           id_anime_genre = insertGenre.insertId;
         }
-        // log después de tener todos los valores
-        console.log("Insertando género:", { id_anime, id_anime_genre, mal_id, genreName });
+
         const [exists] = await pool.query(
           "SELECT * FROM anime_genres_map WHERE id_anime = ? AND id_anime_genre = ?",
           [id_anime, id_anime_genre]
@@ -139,40 +133,130 @@ export const addAnimeToFollowUp = async (req, res) => {
             "INSERT INTO anime_genres_map (id_anime, id_anime_genre, mal_id) VALUES (?, ?, ?)",
             [id_anime, id_anime_genre, mal_id]
           );
-          console.log("Insertado género:", { id_anime, id_anime_genre, mal_id, genreName });
-        } else {
-          console.log("Ya existía género:", { id_anime, id_anime_genre, genreName });
         }
       }
     }
 
-    // 5. Insertar en user_anime_list
-    if (!id_user || !mal_id) {
-      console.log("Error: faltan id_user o mal_id", { id_user, mal_id });
-      return res.status(400).json({ message: "Faltan id_user o mal_id" });
-    }
-
-    //valores por defecto y agregar preferencias
-    const status = "on_hold";
-    const [result] = await pool.query(
-      `INSERT INTO user_anime_list 
-       (id_user, id_anime, mal_id, status, favorite, added_to_list) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [id_user, id_anime, mal_id, status, favorite ?? false, added_to_list ?? true]
+    // 5. Toggle en user_anime_list
+    const [userAnimeRows] = await pool.query(
+      "SELECT * FROM user_anime_list WHERE id_user = ? AND mal_id = ?",
+      [id_user, mal_id]
     );
 
-    res.json({
-      message: "Anime añadido a la lista",
-      id_user_anime: result.insertId,
-      data: { id_user, id_anime, status, favorite, added_to_list }
-    });
+    if (userAnimeRows.length > 0) {
+      // Ya existe → eliminar registro (quitar de la lista)
+      await pool.query("DELETE FROM user_anime_list WHERE id_user = ? AND mal_id = ?", [id_user, mal_id]);
+      return res.json({ message: "Anime eliminado de la lista", removed: true });
+    } else {
+      // No existe → insertar registro
+      const status = "on_hold";
+      const [result] = await pool.query(
+        `INSERT INTO user_anime_list 
+         (id_user, id_anime, mal_id, status, favorite, added_to_list) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [id_user, id_anime, mal_id, status, favorite ?? false, added_to_list ?? true]
+      );
+
+      return res.json({
+        message: "Anime añadido a la lista",
+        id_user_anime: result.insertId,
+        data: { id_user, id_anime, status, favorite, added_to_list }
+      });
+    }
   } catch (error) {
     console.error("Error en addAnimeToFollowUp:", error.sqlMessage || error.message);
     res.status(500).json({
-      message: "Error al añadir anime a la lista",
+      message: "Error al añadir/quitar anime de la lista",
       error: error.sqlMessage || error.message,
       stack: error.stack
     });
   }
 };
 
+// Obtener lista de animes del usuario con sus flags
+export const getUserAnimeList = async (req, res) => {
+  const { id_user } = req.params;
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT u.id_anime, u.mal_id, u.favorite, u.added_to_list
+       FROM user_anime_list u
+       WHERE u.id_user = ?`,
+      [id_user]
+    );
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error al obtener lista:", error.sqlMessage || error.message);
+    res.status(500).json({ message: "Error al obtener lista del usuario" });
+  }
+};
+
+//cambiar favoritos toggle
+export const toggleFavorite = async (req, res) => {
+  const { id_user, id_anime } = req.params; // 👈 solo estos dos
+  console.log(req.params);
+
+  try {
+    // Obtener estado actual (usa mal_id si tu tabla guarda el id de Jikan)
+    const [rows] = await pool.query(
+      "SELECT favorite FROM user_anime_list WHERE id_user = ? AND mal_id = ?",
+      [id_user, id_anime]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Anime no encontrado en la lista del usuario" });
+    }
+
+    const currentFavorite = rows[0].favorite;
+    const newFavorite = !currentFavorite;
+
+    // Actualizar estado (usa mal_id también)
+    await pool.query(
+      "UPDATE user_anime_list SET favorite = ? WHERE id_user = ? AND mal_id = ?",
+      [newFavorite, id_user, id_anime]
+    );
+    console.log("Favorite actualizado", newFavorite);
+
+    res.json({ message: "Favorite actualizado", favorite: newFavorite });
+  } catch (error) {
+    console.error("Error en toggleFavorite:", error.sqlMessage || error.message);
+    res.status(500).json({ message: "Error al actualizar favorito" });
+  }
+};
+
+//listar animes agregados por usuario
+export const getUserFollowUpList = async (req, res) => {
+  const { id_user } = req.params;
+  console.log(id_user);
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        a.id_anime,
+        a.mal_id,
+        a.name AS title,
+        a.synopsis,
+        a.episodes,
+        a.image,
+        a.score,
+        s.name,
+        COALESCE(JSON_ARRAYAGG(ag.name), JSON_ARRAY()) AS genres,
+        u.favorite,
+        u.added_to_list,
+        u.status
+      FROM user_anime_list u
+      JOIN animes a ON a.id_anime = u.id_anime
+      JOIN seasons s ON s.id_season = a.id_season
+      LEFT JOIN anime_genres_map agm ON agm.id_anime = a.id_anime
+      LEFT JOIN animes_genres ag ON ag.id_anime_genre = agm.id_anime_genre
+      WHERE u.id_user = ?
+      GROUP BY 
+        a.id_anime, a.mal_id, a.name, a.synopsis, a.episodes, a.image, a.score, s.name,
+        u.favorite, u.added_to_list, u.status;
+`, [id_user]);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error al obtener lista:", error.sqlMessage || error.message);
+    res.status(500).json({ message: "Error al obtener lista del usuario" });
+  }
+};

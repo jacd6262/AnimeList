@@ -5,6 +5,9 @@ import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
 import "./index.css";
 import { AuthProvider } from "./components/hooks/AuthContext";
+import { Toaster } from "sonner";
+import FollowUpAnime from "./components/pages/FollowUpAnime";
+
 
 const App = () => {
   return (
@@ -17,7 +20,9 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/follow-up" element={<FollowUpAnime />} />
           </Routes>
+          <Toaster richColors position="bottom-center" />
         </div>
       </AuthProvider>
     </BrowserRouter>

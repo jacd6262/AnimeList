@@ -79,7 +79,7 @@ const Navbar = () => {
             {/* Lista de seguimiento */}
             <NavigationMenuItem>
               <NavigationMenuLink
-                href="/watchlist"
+                href="/follow-up"
                 className="font-medium text-sm transition-colors hover:text-purple-400 bg-transparent hover:bg-transparent focus:bg-transparent"
               >
                 Lista de Seguimiento

@@ -18,4 +18,5 @@ export interface Anime {
     episodes?: number;
     synopsis?: string;
     mal_id: number;
+    image?: string;
 }

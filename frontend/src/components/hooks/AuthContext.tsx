@@ -1,6 +1,10 @@
 // app/AuthContext.tsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import {
+    getUserAnimeList,
+    toggleFavorite as toggleFavoriteService,
+} from "@/app/registerUser";
 
 interface User {
     id: number;
@@ -12,6 +16,8 @@ interface AuthContextType {
     user: User | null;
     login: (token: string) => void;
     logout: () => void;
+    getUserAnimeList: () => Promise<any>;
+    toggleFavorite: (id_anime: number) => Promise<any>;
 }
 
 interface TokenPayload {
@@ -59,8 +65,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("token");
     };
 
+    const getUserAnimeListFn = async () => {
+        if (!user) return [];
+        return await getUserAnimeList(user.id);
+    };
+
+    const toggleFavoriteFn = async (id_anime: number) => {
+        if (!user) return;
+        return await toggleFavoriteService(user.id, id_anime);
+    };
+
+
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{
+            user,
+            login,
+            logout,
+            getUserAnimeList: getUserAnimeListFn,
+            toggleFavorite: toggleFavoriteFn,
+        }}>
             {children}
         </AuthContext.Provider>
     );

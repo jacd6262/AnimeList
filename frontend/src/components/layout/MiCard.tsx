@@ -1,10 +1,9 @@
 import { useState, useRef } from "react";
-import { ChevronDown, Heart, Plus, StarIcon } from "lucide-react";
+import { ChevronDown, Heart, Plus, StarIcon, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
-import { addAnimeToList } from "@/app/registerUser";
-import { useAuth } from "../hooks/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 type Genre = {
   mal_id: number;
@@ -22,43 +21,36 @@ type AnimeCardProps = {
   score: number;
   genres: Genre[];
   season: string;
+  favorite: boolean;
+  added_to_list: boolean;
+  onToggleFavorite: (mal_id: number) => void;
+  onToggleAddToList: (anime: any) => void;
+  onRemoveFromList: () => void;
 };
 
-const MiCard = ({ mal_id, title, episodes, image, score, genres, season }: AnimeCardProps) => {
+const MiCard = ({
+  mal_id, title,
+  episodes,
+  image,
+  score,
+  genres,
+  favorite,
+  added_to_list,
+  onToggleFavorite,
+  onToggleAddToList,
+  onRemoveFromList }: AnimeCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const hoverTimeoutRef = useRef<number | null>(null);
-
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
   const handleMouseEnter = () => {
     // Add a slight delay so it doesn't pop up instantly while scrolling across many
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovered(true);
     }, 400); // 400ms delay mimics netflix feel
   };
-
-  const handleAddToList = async () => {
-    if (!user) {
-      alert("Debes iniciar sesión para añadir a tu lista");
-      return;
-    }
-    await addAnimeToList({
-      id_user: user.id,
-      mal_id: mal_id,
-      favorite: false,
-      added_to_list: true,
-      season: season,
-      name: title,
-      genres: genres.map((genre) => genre.name),
-    })
-  };
-
   const handleMouseLeave = () => {
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     setIsHovered(false);
   };
-
   return (
     <div
       className="relative w-full aspect-video rounded-sm"
@@ -101,14 +93,50 @@ const MiCard = ({ mal_id, title, episodes, image, score, genres, season }: Anime
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {/* Heart / Favorites Button */}
-                  <button className="border-2 border-gray-500 text-white p-1.5 rounded-full hover:border-purple-500 hover:text-purple-500 transition-colors duration-200 cursor-pointer">
-                    <Heart className="w-5 h-5" />
-                  </button>
-                  <button className="border-2 border-gray-500 text-white p-1.5 rounded-full hover:border-purple-500 hover:text-purple-500 transition-colors duration-200 cursor-pointer">
-                    <Plus
-                      onClick={handleAddToList}
-                      className="w-5 h-5" />
-                  </button>
+                  {added_to_list && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => onToggleFavorite(mal_id)}
+                            className={`border-2 p-1.5 rounded-full transition-colors duration-200 cursor-pointer
+            ${favorite
+                                ? "border-red-500 text-red-500 hover:border-red-600 hover:bg-red-900/30"
+                                : "border-gray-500 text-white hover:border-gray-400 hover:bg-zinc-800"
+                              }`}
+                          >
+                            <Heart className="w-5 h-5" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          {favorite ? "En favoritos" : "Añadir a favoritos"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+
+                  {/* Plus / Add to List Button */}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={added_to_list ? onRemoveFromList : onToggleAddToList}
+                          className={`border-2 p-1.5 rounded-full transition-colors duration-200 cursor-pointer
+          ${added_to_list
+                              ? "border-purple-500 text-purple-500 hover:border-purple-600 hover:bg-purple-900/30"
+                              : "border-gray-500 text-white hover:border-gray-400 hover:bg-zinc-800"
+                            }`}
+                        >
+                          {added_to_list ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        {added_to_list ? "Quitar de lista" : "Añadir a lista"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+
                 </div>
 
                 {/* Expansion/Details Arrow */}
@@ -147,7 +175,7 @@ const MiCard = ({ mal_id, title, episodes, image, score, genres, season }: Anime
               >
                 {genres.slice(0, 3).map((genre, index) => (
                   <span
-                    key={genre.mal_id}
+                    key={index}
                     className="hover:text-purple-400 transition-colors"
                   >
                     {genre.name}
