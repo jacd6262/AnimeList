@@ -176,7 +176,6 @@ export const addAnimeToFollowUp = async (req, res) => {
 // Obtener lista de animes del usuario con sus flags
 export const getUserAnimeList = async (req, res) => {
   const { id_user } = req.params;
-
   try {
     const [rows] = await pool.query(
       `SELECT u.id_anime, u.mal_id, u.favorite, u.added_to_list
@@ -184,7 +183,6 @@ export const getUserAnimeList = async (req, res) => {
        WHERE u.id_user = ?`,
       [id_user]
     );
-
     res.json(rows);
   } catch (error) {
     console.error("Error al obtener lista:", error.sqlMessage || error.message);

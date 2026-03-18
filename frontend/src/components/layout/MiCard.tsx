@@ -175,10 +175,10 @@ const MiCard = ({
               >
                 {genres.slice(0, 3).map((genre, index) => (
                   <span
-                    key={index}
+                    key={typeof genre === "string" ? genre : genre.name}
                     className="hover:text-purple-400 transition-colors"
                   >
-                    {genre.name}
+                    {typeof genre === "string" ? genre : genre.name}
                     {genres.length > 1 &&
                       index < genres.slice(0, 3).length - 1 &&
                       " •"}

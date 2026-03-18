@@ -12,6 +12,8 @@ const FollowUpAnime = () => {
         );
     }
 
+    console.log(userList);
+
     return (
         <div className="w-full min-h-screen bg-transparent pt-24 pb-10 px-8 lg:px-14">
             <div className="w-full flex flex-col items-center">
@@ -23,12 +25,12 @@ const FollowUpAnime = () => {
                             <MiCard
                                 key={anime.mal_id}
                                 mal_id={anime.mal_id}
-                                title={anime.title}        // 👈 ahora sí, backend devuelve "title"
+                                title={anime.title}
                                 synopsis={anime.synopsis}
                                 episodes={anime.episodes}
                                 image={anime.image}
                                 score={anime.score}
-                                genres={anime.genres}       // si es array de strings, puedes mapearlo a objetos
+                                genres={anime.genres}
                                 season={anime.season}
                                 favorite={anime.favorite}
                                 added_to_list={anime.added_to_list}
